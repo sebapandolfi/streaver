@@ -1,25 +1,24 @@
 import { postsData } from './data/posts.mjs';
 import { usersData } from './data/users.mjs';
-import { PrismaClient } from '@prisma/client';
-import { GeoLocationData, AddressData, CompanyData, UsersTrimData, PostData } from './types';
+import { PrismaClient, Address, Company, GeoLocation, User} from '@prisma/client';
 
 // Extracting and adding id to address, geolocation, and company data from user data
-const geoLocationData: GeoLocationData[] = usersData.map((user, index) => {
+const geoLocationData: GeoLocation[] = usersData.map((user, index) => {
   const { ...geo } = user.address.geo;
   return { id: index + 1, ...geo };
 });
 
-const addressData: AddressData[] = usersData.map((user, index) => {
+const addressData: Address[] = usersData.map((user, index) => {
   const { geo, ...address } = user.address;
   return { id: index + 1, geoLocationId: index + 1, ...address };
 });
 
-const companyData: CompanyData[] = usersData.map((user, index) => {
+const companyData: Company[] = usersData.map((user, index) => {
   const { ...company } = user.company;
   return { id: index + 1, ...company };
 });
 
-const usersTrimData: UsersTrimData[] = usersData.map((user, index) => {
+const usersTrimData: User[] = usersData.map((user, index) => {
   const { company, address, ...userData } = user;
   return { ...userData, companyId: index + 1, addressId: index + 1 };
 });
