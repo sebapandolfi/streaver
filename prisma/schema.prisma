@@ -1,0 +1,65 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// User model
+model User {
+  id           Int      @id @default(autoincrement())
+  name         String
+  username     String
+  email        String
+  phone        String
+  website      String
+  companyId    Int      // This is the correct reference to the Company model
+  addressId    Int      // This is the correct reference to the Address model
+  posts        Post[]
+  company      Company  @relation(fields: [companyId], references: [id])
+  address      Address  @relation(fields: [addressId], references: [id])
+}
+
+// Address model
+model Address {
+  id            Int         @id @default(autoincrement())
+  street        String
+  suite         String
+  city          String
+  zipcode       String
+  geoLocationId Int         // This is the correct reference to the GeoLocation model
+  users         User[]
+  geo           GeoLocation @relation(fields: [geoLocationId], references: [id])
+}
+
+// GeoLocation model
+model GeoLocation {
+  id         Int        @id @default(autoincrement())
+  lat        String
+  lng        String
+  addresses  Address[]
+}
+
+// Company model
+model Company {
+  id            Int    @id @default(autoincrement())
+  name          String
+  catchPhrase   String
+  bs String
+  users         User[]
+}
+
+// Post model
+model Post {
+  id       Int      @id @default(autoincrement())
+  userId   Int
+  title    String
+  body     String
+  user     User     @relation(fields: [userId], references: [id])
+}
+
