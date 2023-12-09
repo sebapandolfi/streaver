@@ -30,6 +30,6 @@
     "app/lib/placeholder-data.js",
     "scripts/seed.mts",
     "scripts/truncate.mts"
-  ],
+, "app/pages/api/hello.js"  ],
   "exclude": ["node_modules"]
 }
