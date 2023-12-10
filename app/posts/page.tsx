@@ -3,6 +3,8 @@ import { Card } from '@/app/ui/posts/cards';
 import { lusitana } from '@/app/ui/fonts';
 import { VerticalCarousel } from '../ui/posts/verticalCarousel';
 import { extendedPost, useInfiniteScroll } from '../lib/useInfiniteScroll';
+import { Modal } from '../ui/general/modal';
+import { useEffect, useState } from 'react';
 
 const initialData : extendedPost[]= [];
 
@@ -15,19 +17,41 @@ export default function Page() {
     hasDynamicPosts,
     dynamicPosts,
     isLastPage,
+    hasError
   }  = useInfiniteScroll(initialData);
+  const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
 
+  useEffect(() => {
+     hasError != null ? openModalError() : null;
+  }, [hasError]); 
+
+  const openModalError = () => {
+    setIsErrorModalOpen(true);
+  };
+
+  const closeModalError = () => {
+    setIsErrorModalOpen(false);
+  };
   return (
     <main>
     <h1 className={`${lusitana.className} text-blue-500 mb-4 text-5xl font-bold text-center`}>
         Posts
     </h1>
     <div className="grid gap-2 grid-cols-1 ">
-        {<VerticalCarousel 
+        <VerticalCarousel 
             isLoading={isLoading}
             loadMoreCallback={loadMoreCallback}
             isLastPage={isLastPage} 
-            cards={hasDynamicPosts ? dynamicPosts.map((post) => <Card title={post.title} body={post.body} author={post.user.name} id={post.id}/>) : null } />}
+            cards={hasDynamicPosts ? dynamicPosts.map((post) => <Card title={post.title} body={post.body} author={post.user.name} id={post.id}/>) : null } />
+        <Modal
+        title="Error retrieving Post"
+        body={hasError}
+        accept={null}
+        cancel="Close"
+        isOpen={isErrorModalOpen}
+        onClose={closeModalError}
+        acceptAction={closeModalError}
+      />
     </div>
 </main>
   );

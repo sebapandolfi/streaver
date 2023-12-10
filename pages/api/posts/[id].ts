@@ -6,10 +6,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     try {
     if (method == 'GET'){
        
-            const { page } = req.query;
+            const { id } = req.query;
             const pageSize = 10; // Adjust the page size as needed
-            const skip = page ? (parseInt(page as string) - 1) * pageSize : 0;
-        
+            const skip = id ? (parseInt(id as string) - 1) * pageSize : 0;
             const posts = await prisma.post.findMany({
               take: pageSize,
               skip,

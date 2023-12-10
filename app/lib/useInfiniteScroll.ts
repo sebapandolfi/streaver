@@ -7,14 +7,16 @@ export type UseInfiniteScroll = {
     hasDynamicPosts: boolean;
     dynamicPosts: extendedPost[];
     isLastPage: boolean;
+    hasError: string | null
 };
 
 export type extendedPost = Post & {
     user: User
-  }
+}
 
 export const useInfiniteScroll = (posts: extendedPost[]): UseInfiniteScroll => {
     const [isLoading, setIsLoading] = useState(false);
+    const [hasError, setHasError] = useState<string| null>(null);
     const [page, setPage] = useState(1);
     const [hasDynamicPosts, setHasDynamicPosts] = useState(false);
     const [dynamicPosts, setDynamicPosts] = useState<extendedPost[]>(posts);
@@ -27,7 +29,6 @@ export const useInfiniteScroll = (posts: extendedPost[]): UseInfiniteScroll => {
         (entries: any[]) => {
             const target = entries[0];
             if (target.isIntersecting) {
-
                 setIsLoading(true);
                 clearTimeout(loadMoreTimeoutRef.current);
 
@@ -41,13 +42,24 @@ export const useInfiniteScroll = (posts: extendedPost[]): UseInfiniteScroll => {
 
                         if (newPosts?.length) {
                             const newDynamicPosts = [...dynamicPosts, ...newPosts];
-                            setDynamicPosts(newDynamicPosts);
-                            setIsLastPage(newDynamicPosts?.length === data?.total);
+                            const uniquePostIds = new Set();
+                            const filteredDynamicPosts = newDynamicPosts.filter((post) => {
+                                if (!uniquePostIds.has(post.id)) {
+                                    uniquePostIds.add(post.id);
+                                    return true; // Include the post in the filtered array
+                                }
+                                return false; // Skip the post if its ID is already in the Set
+                            });
+                            setDynamicPosts(filteredDynamicPosts);
+                            setIsLastPage(filteredDynamicPosts?.length >= data?.total);
                             setHasDynamicPosts(true);
                             setIsLoading(false);
+                        }else{
+                            setHasError("Sorry, no posts were found.");
                         }
                     } catch (error) {
                         // Handle error here
+                        setHasError("An error occurred while retrieving the post. Please try again.");
                         console.error('Error loading more posts:', error);
                     }
                 }, 500);
@@ -79,5 +91,6 @@ export const useInfiniteScroll = (posts: extendedPost[]): UseInfiniteScroll => {
         hasDynamicPosts,
         dynamicPosts,
         isLastPage,
+        hasError
     };
 };

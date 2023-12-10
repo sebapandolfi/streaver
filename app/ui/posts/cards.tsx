@@ -15,6 +15,7 @@ export function Card({
   id: number;
 }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
   const [shouldHideContent, setShouldHideContent] = useState(false);
 
   const deletePost = async () => {
@@ -27,9 +28,11 @@ export function Card({
         console.log(`Post with ID ${id} deleted successfully`);
         setShouldHideContent(true);
       } else {
+        openModalError()
         console.error(`Failed to delete post with ID ${id}`);
       }
     } catch (error) {
+      openModalError()
       console.error('Error deleting post:', error);
     }
     closeModal();
@@ -43,6 +46,13 @@ export function Card({
     setIsModalOpen(false);
   };
 
+  const openModalError = () => {
+    setIsErrorModalOpen(true);
+  };
+
+  const closeModalError = () => {
+    setIsErrorModalOpen(false);
+  };
   return (
     <div hidden={shouldHideContent} className="rounded-xl bg-white p-4 shadow-md">
       <div className="flex items-center mb-4">
@@ -66,7 +76,15 @@ export function Card({
         onClose={closeModal}
         acceptAction={deletePost}
       />
-    
+       <Modal
+        title="Error Deleting Post"
+        body="An error occurred while deleting the post. Please try again."
+        accept={null}
+        cancel="Close"
+        isOpen={isErrorModalOpen}
+        onClose={closeModalError}
+        acceptAction={closeModalError}
+      />
     </div>
   );
 }

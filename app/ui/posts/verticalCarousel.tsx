@@ -21,7 +21,7 @@ export function VerticalCarousel({
     return (
         <div className="h-96 carousel carousel-vertical rounded-box">
             {cards?.map((card, index) => (
-                <div key={index} className="carousel-item h-50">
+                <div key={index} className="carousel-item h-50 mb-5">
                     {card}
                 </div>
             ))}
