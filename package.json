@@ -6,7 +6,7 @@
     "prettier": "prettier --write --ignore-unknown .",
     "prettier:check": "prettier --check --ignore-unknown .",
     "start": "next start",
-    "seed": "node --loader ts-node/esm ./scripts/seed.mjs",
+    "seed": "node --loader ts-node/esm ./scripts/seed.mts",
     "truncate": "node --loader ts-node/esm  ./scripts/truncate.mts"
   },
   "dependencies": {
