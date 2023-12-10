@@ -7,7 +7,7 @@ type VerticalCarouselProps = Pick<
     UseInfiniteScroll,
     "isLoading" | "loadMoreCallback" | "isLastPage"
 > & {
-    cards: React.JSX.Element[];
+    cards: React.JSX.Element[] | null;
 };
 
 export function VerticalCarousel({
@@ -20,7 +20,7 @@ export function VerticalCarousel({
 ) {
     return (
         <div className="h-96 carousel carousel-vertical rounded-box">
-            {cards.map((card, index) => (
+            {cards?.map((card, index) => (
                 <div key={index} className="carousel-item h-50">
                     {card}
                 </div>

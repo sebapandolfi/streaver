@@ -1,19 +1,23 @@
-import { Post } from "@prisma/client";
+import { Post, User } from "@prisma/client";
 import { useCallback, useRef, useState } from "react";
 
 export type UseInfiniteScroll = {
     isLoading: boolean;
     loadMoreCallback: (el: HTMLDivElement) => void;
     hasDynamicPosts: boolean;
-    dynamicPosts: Post[];
+    dynamicPosts: extendedPost[];
     isLastPage: boolean;
 };
 
-export const useInfiniteScroll = (posts: Post[]): UseInfiniteScroll => {
+export type extendedPost = Post & {
+    user: User
+  }
+
+export const useInfiniteScroll = (posts: extendedPost[]): UseInfiniteScroll => {
     const [isLoading, setIsLoading] = useState(false);
     const [page, setPage] = useState(1);
     const [hasDynamicPosts, setHasDynamicPosts] = useState(false);
-    const [dynamicPosts, setDynamicPosts] = useState<Post[]>(posts);
+    const [dynamicPosts, setDynamicPosts] = useState<extendedPost[]>(posts);
     const [isLastPage, setIsLastPage] = useState(false);
     const observerRef = useRef<IntersectionObserver>();
     const loadMoreTimeout: NodeJS.Timeout = setTimeout(() => null, 500);
@@ -37,7 +41,6 @@ export const useInfiniteScroll = (posts: Post[]): UseInfiniteScroll => {
 
                         if (newPosts?.length) {
                             const newDynamicPosts = [...dynamicPosts, ...newPosts];
-                            console.log(newDynamicPosts)
                             setDynamicPosts(newDynamicPosts);
                             setIsLastPage(newDynamicPosts?.length === data?.total);
                             setHasDynamicPosts(true);
@@ -55,7 +58,6 @@ export const useInfiniteScroll = (posts: Post[]): UseInfiniteScroll => {
 
     const loadMoreCallback = useCallback(
         (el: HTMLDivElement) => {
-            console.log(el)
             if (isLoading) return;
             if (observerRef.current) observerRef.current.disconnect();
 

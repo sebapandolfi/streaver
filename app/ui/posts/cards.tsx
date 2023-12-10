@@ -1,23 +1,74 @@
 import { lusitana } from '@/app/ui/fonts';
+import { TrashIcon } from '@heroicons/react/24/solid';
+import { Modal } from '../general/modal';
+import { useState } from 'react';
 
 export function Card({
   title,
-  value
+  body,
+  author,
+  id
 }: {
   title: string;
-  value: number | string;
+  body: string;
+  author: string;
+  id: number;
 }) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [shouldHideContent, setShouldHideContent] = useState(false);
+
+  const deletePost = async () => {
+    try {
+      const response = await fetch(`/api/posts/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        console.log(`Post with ID ${id} deleted successfully`);
+        setShouldHideContent(true);
+      } else {
+        console.error(`Failed to delete post with ID ${id}`);
+      }
+    } catch (error) {
+      console.error('Error deleting post:', error);
+    }
+    closeModal();
+  };
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
   return (
-    <div className="rounded-xl bg-gray-50 p-2 shadow-sm">
-      <div className="flex p-4">
-        <h3 className="ml-2 text-xl font-medium text-center">Title: {title}</h3>
+    <div hidden={shouldHideContent} className="rounded-xl bg-white p-4 shadow-md">
+      <div className="flex items-center mb-4">
+        <h3 className="text-xl font-medium">Title: {title}</h3>
+        <TrashIcon
+          title="Delete post"
+          className="w-6 h-6 cursor-pointer"
+          onClick={() => openModal()}
+        />
       </div>
-      <p
-        className={`${lusitana.className}
-           rounded-xl bg-white px-4 py-8 text-md`}
-      >
-        {value}
-      </p>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-l font-medium">Author: {author}</h2>
+      </div>
+      <p className={`${lusitana.className} text-md`}>{body}</p>
+      <Modal
+        title="Delete Post"
+        body="Are you sure you want to delete this Post? This action cannot be undone."
+        accept="Yes, I'm sure"
+        cancel="No, cancel"
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        acceptAction={deletePost}
+      />
+    
     </div>
   );
 }
+
+
