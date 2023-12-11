@@ -22,7 +22,7 @@ npm install
    a. Create a `.env` file in the root of the project and add your database connection details:
 
    ```env
-        DATABASE_URL="file:./dev.db"
+   DATABASE_URL="file:./dev.db"
    ```
 
    b. Run the migration script to create the necessary tables:
