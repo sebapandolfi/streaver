@@ -20,9 +20,8 @@ export default function Page() {
           >
             <strong>Welcome to Next.js blog.</strong> This is the example for the{' '}
             <a href="https://nextjs.org/learn/" className="text-blue-500">
-              Next.js Learn Course
+              Next.js Learn Course 
             </a>
-            with some modifications.
           </p>
           <Link
             href="/login"

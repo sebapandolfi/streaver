@@ -13,7 +13,7 @@ git clone https://github.com/sebapandolfi/streaver.git
 2. **Install dependencies:**
 
 ```bash
-cd nextjs-prisma-blog-app
+cd streaver
 npm install
 ```
 
