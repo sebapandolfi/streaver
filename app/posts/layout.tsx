@@ -1,3 +1,4 @@
+'use client'
 import SideNav from '@/app/ui/posts/sidenav';
  
 export default function Layout({ children }: { children: React.ReactNode }) {

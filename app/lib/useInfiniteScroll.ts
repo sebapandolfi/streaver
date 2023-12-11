@@ -1,5 +1,5 @@
 import { Post, User } from "@prisma/client";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export type UseInfiniteScroll = {
     isLoading: boolean;
@@ -14,7 +14,7 @@ export type extendedPost = Post & {
     user: User
 }
 
-export const useInfiniteScroll = (posts: extendedPost[]): UseInfiniteScroll => {
+export const useInfiniteScroll = (posts: extendedPost[], authorFilter: string): UseInfiniteScroll => {
     const [isLoading, setIsLoading] = useState(false);
     const [hasError, setHasError] = useState<string| null>(null);
     const [page, setPage] = useState(1);
@@ -24,6 +24,13 @@ export const useInfiniteScroll = (posts: extendedPost[]): UseInfiniteScroll => {
     const observerRef = useRef<IntersectionObserver>();
     const loadMoreTimeout: NodeJS.Timeout = setTimeout(() => null, 500);
     const loadMoreTimeoutRef = useRef<NodeJS.Timeout>(loadMoreTimeout);
+
+    useEffect(() => {
+        setPage(1);
+        setHasDynamicPosts(false);
+        setDynamicPosts(posts);
+        setIsLastPage(false);
+      }, [authorFilter]);
 
     const handleObserver = useCallback(
         (entries: any[]) => {
@@ -35,7 +42,7 @@ export const useInfiniteScroll = (posts: extendedPost[]): UseInfiniteScroll => {
                 // this timeout debounces the intersection events
                 loadMoreTimeoutRef.current = setTimeout(async () => {
                     try {
-                        const response = await fetch(`/api/posts/${page}`);
+                        const response = await fetch(`/api/posts/${page}?author=${authorFilter}`);
                         const data = await response.json();
                         setPage(page + 1);
                         const newPosts = data?.posts;
